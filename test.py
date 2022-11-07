@@ -4,12 +4,15 @@ import json
 
 class FlaskAppTest(unittest.TestCase):
     def setUp(self):
-        self.app = tested_app.app.test_client()
+        self.app = tested_app.Flask_App.test_client()
 
     def test_get_hello_endpoint(self):
         r = self.app.get('/')
         self.assertEqual(r._status_code, 200)
-        self.assertEqual(r.get_data(), b'Hello world from app Pipeline testing.')
+    
+    def test_operation_result(self):
+        r = self.app.post('/operation_result/')
+        self.assertEqual(r._status_code, 200)
 
 
 if __name__ == '__main__':
