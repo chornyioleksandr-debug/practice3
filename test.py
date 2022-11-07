@@ -12,7 +12,7 @@ class FlaskAppTest(unittest.TestCase):
     
     def test_operation_result(self):
         r = self.app.post('/operation_result/')
-        self.assertEqual(r._status_code, 200)
+        self.assertEqual(r._status_code, 400)
 
 
 if __name__ == '__main__':
