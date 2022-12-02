@@ -47,9 +47,8 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
     - name: Build and push
-      uses: docker/build-push-action@v3
-      with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/practice3:latest
+      run: |
+        docker build -t practice3 .
+        docker run -d -p 5000:5000 practice3
+        docker ps -a
+        docker image push ${{ secrets.DOCKER_HUB_USERNAME }}/practice3:latest
