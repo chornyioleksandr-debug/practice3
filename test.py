@@ -9,11 +9,6 @@ class FlaskAppTest(unittest.TestCase):
     def test_get_hello_endpoint(self):
         r = self.app.get('/')
         self.assertEqual(r._status_code, 200)
-    
-    def test_operation_result(self):
-        r = self.app.post('/operation_result/')
-        self.assertEqual(r._status_code, 400)
-
 
 if __name__ == '__main__':
     unittest.main()
