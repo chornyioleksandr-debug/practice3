@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
-name: Python application
+name: Python app deploy on Heroku by gitAction v1
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        fetch-depth: 0
+          fetch-depth: 0
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
@@ -36,19 +36,30 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
+    - name: test
       run: |
-        python3 -m unittest test.py
+        python3 -m unittest tests.py
       env:
-       CI: true
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-    - name: Build and push
+        CI: true
+    - name: Heroku login credentials
       run: |
-        docker build -t practice3 .
-        docker run -d -p 5000:5000 practice3
-        docker ps -a
-        docker image push ${{ secrets.DOCKER_HUB_USERNAME }}/practice3:latest
+          cat > ~/.netrc <<EOF
+            machine api.heroku.com
+              login $HEROKU_EMAIL
+              password $HEROKU_API_KEY
+            machine git.heroku.com
+              login $HEROKU_EMAIL
+              password $HEROKU_API_KEY
+          EOF
+      env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+    - name: Add Heroku remote
+      run: |
+        heroku git:remote --app $HEROKU_APP_NAME
+      env:
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+    - name: Deploy to Heroku
+      run: |         
+        git push heroku main
+        curl 'https://${{ secrets.HEROKU_APP_NAME }}.herokuapp.com/'
