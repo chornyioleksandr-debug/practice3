@@ -4,7 +4,6 @@ Flask_App = Flask(__name__) # Creating our Flask Instance
 
 @Flask_App.route('/', methods=['GET'])
 def index():
-    """ Displays the index page accessible at '/' """
 
     return render_template('index.html')
 
